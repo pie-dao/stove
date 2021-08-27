@@ -4,8 +4,8 @@ The epoch based Oven.
 
 ## How to run tests
 
+(You need [dapptools](https://github.com/dapphub/dapptools) installed) 
+
 ```
-yarn
-npx hardhat compile
-npx hardhat test
+make test
 ```
