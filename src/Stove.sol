@@ -93,6 +93,10 @@ contract Stove is Ownable {
         address _feesRecipient,
         uint256 _fees
     ) {
+        require(_tokenInput != address(0), "ZERO_ADDR");
+        require(_tokenOutput != address(0), "ZERO_ADDR");
+        require(_recipe != address(0), "ZERO_ADDR");
+
         require(_fees < MAX_FEE, "_fees > MAX_FEE");
 
         tokenInput = _tokenInput;
@@ -103,7 +107,9 @@ contract Stove is Ownable {
 
         IERC20(_tokenInput).safeApprove(_recipe, type(uint256).max);
 
+        emit FeesChanged(0, _fees);
         emit RecipeChanged(address(0), _recipe);
+        emit FeesRecipientChanged(address(0), _feesRecipient);
     }
 
     /// @notice The `deposit` function can be called to join the Stove and wait for the PIEs to be baked
@@ -217,6 +223,13 @@ contract Stove is Ownable {
 
     /// @notice Can be used to change the recipe called to join the PIE.
     function changeRecipe(address _recipe) external onlyOwner {
+        require(_recipe != address(0), "ZERO_ADDR");
+
+        IERC20(tokenInput).safeApprove(recipe, 0);
+        IERC20(tokenInput).safeApprove(_recipe, type(uint256).max);
+
+        emit RecipeChanged(recipe, _recipe);
+
         recipe = _recipe;
     }
 
