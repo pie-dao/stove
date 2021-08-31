@@ -186,12 +186,22 @@ contract Stove is Ownable {
         uint256 _epoch = epoch;
         uint256 _amountInput = totalDeposits[_epoch];
 
-        (uint256 _usedInput, uint256 _bakedOutput) = IRecipe(recipe).bake(
+        uint256 _contractBalancePreBake = IERC20(tokenOutput).balanceOf(
+            address(this)
+        );
+
+        (uint256 _usedInput, ) = IRecipe(recipe).bake(
             tokenInput,
             tokenOutput,
             _amountInput,
             _data
         );
+
+        uint256 _contractBalanceAfterBake = IERC20(tokenOutput).balanceOf(
+            address(this)
+        );
+
+        uint256 _bakedOutput = _contractBalanceAfterBake - _contractBalancePreBake;
 
         require(_bakedOutput >= _minOutput, "Insufficient baked amount!");
 
